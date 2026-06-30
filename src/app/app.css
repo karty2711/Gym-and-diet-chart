@@ -1,0 +1,74 @@
+:host {
+    display: block;
+    min-height: 99vh;
+    background: #092f7d;
+    color: #ffffff;
+    font-family: "Inter", sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.body {
+    margin-top: 20px;
+}
+
+.mat-mdc-tab-group {
+    --mdc-tab-indicator-active-indicator-color: #38bdf8;
+    --mat-tab-header-active-label-text-color: #38bdf8;
+    --mat-tab-header-active-ripple-color: rgba(56, 189, 248, 0.12);
+    --mat-tab-header-inactive-label-text-color: #94a3b8;
+    --mat-tab-header-inactive-ripple-color: rgba(255, 255, 255, 0.08);
+    --mat-tab-header-active-focus-label-text-color: #38bdf8;
+    --mat-tab-header-active-hover-label-text-color: #38bdf8;
+    --mat-tab-header-inactive-focus-label-text-color: #cbd5e1;
+    --mat-tab-header-inactive-hover-label-text-color: #cbd5e1;
+    --mat-tab-header-label-text-size: 14px;
+    --mat-tab-header-label-text-weight: 600;
+    --mat-tab-header-label-text-tracking: 0.04em;
+}
+
+.mat-mdc-tab-header {
+    background: #111827;
+    border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mat-mdc-tab-body-wrapper {
+    background: transparent;
+}
+
+::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #111827;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 8px;
+    }
+}

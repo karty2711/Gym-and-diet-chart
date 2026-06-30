@@ -1,0 +1,88 @@
+.diet-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    border-radius: 10px;
+    margin: 20px;
+    box-shadow: 3px 6px 2px 4px rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.meal-card,
+.summary-card {
+    height: 100%;
+    background: linear-gradient(135deg, #1e293b, #0f172a) !important;
+    padding: 10px !important;
+    border-radius: 10px !important;
+    box-shadow: 3px 6px 2px 4px rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff;
+    border-left: 5px solid #38bdf8 !important;
+    /* MDC token overrides */
+    --mdc-elevated-card-container-color: #1e293b;
+    --mdc-elevated-card-container-elevation: none;
+    --mat-card-title-text-color: #ffffff;
+    --mat-card-subtitle-text-color: #94a3b8;
+}
+
+mat-card-title,
+.mat-mdc-card-title {
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    text-align: center;
+    color: #f0f9ff !important;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 8px;
+}
+
+mat-card-content,
+.mat-mdc-card-content {
+    color: #f8fafc;
+    padding: 0 !important;
+}
+
+mat-card-content ul {
+    margin: 0 0 8px 0;
+    padding-left: 18px;
+}
+
+mat-card-content li {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #cbd5e1;
+}
+
+mat-card-content h4 {
+    margin: 12px 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #38bdf8;
+}
+
+.summary-card mat-card-content p {
+    margin: 4px 0;
+    font-size: 13px;
+    color: #cbd5e1;
+}
+
+.summary-card mat-card-content p strong {
+    color: #f0f9ff;
+}
+
+@media (max-width: 768px) {
+    .diet-container {
+        margin: 10px;
+        padding: 10px;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .diet-container {
+        grid-template-columns: 1fr;
+        margin: 6px;
+    }
+}
