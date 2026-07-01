@@ -1,18 +1,19 @@
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideMockWorkoutDataService } from '../../core/test-fixtures';
+import { DietComponent } from './diet';
 
-import { Diet } from './diet';
-
-describe('Diet', () => {
-  let component: Diet;
-  let fixture: ComponentFixture<Diet>;
+describe('DietComponent', () => {
+  let component: DietComponent;
+  let fixture: ComponentFixture<DietComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Diet]
-    })
-    .compileComponents();
+      imports: [DietComponent],
+      providers: [provideZonelessChangeDetection(), provideMockWorkoutDataService()],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(Diet);
+    fixture = TestBed.createComponent(DietComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

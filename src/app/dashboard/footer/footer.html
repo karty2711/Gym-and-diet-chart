@@ -1,20 +1,22 @@
+@if (notes(); as note) {
 <div class="footer">
     <ul>
         <li>
             <span class="footerLabel">Calorie Strategy : </span>
-            <span class="footerNote">{{notes.calorie_strategy}}</span>
+            <span class="footerNote">{{ note.calorie_strategy }}</span>
         </li>
         <li>
             <span class="footerLabel">Protein Strategy : </span>
-            <span class="footerNote">{{notes.protein_strategy}}</span>
+            <span class="footerNote">{{ note.protein_strategy }}</span>
         </li>
         <li>
             <span class="footerLabel">Progression : </span>
-            <span class="footerNote">{{notes.progression}}</span>
+            <span class="footerNote">{{ note.progression }}</span>
         </li>
         <li>
             <span class="footerLabel">Sunday : </span>
-            <span class="footerNote">{{notes.sunday}}</span>
+            <span class="footerNote">{{ note.sunday }}</span>
         </li>
     </ul>
 </div>
+}

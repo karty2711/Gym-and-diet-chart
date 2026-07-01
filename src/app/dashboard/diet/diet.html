@@ -1,100 +1,62 @@
-<mat-tab-group mat-stretch-tabs="true" mat-align-tabs="center">
-    @for (day of planner.days; track day.day) {
+@if (planner(); as plan) {
+<mat-tab-group mat-stretch-tabs="true" mat-align-tabs="center" class="day-tabs" aria-label="Diet plan by day">
+    @for (day of plan.days; track day.day) {
     <mat-tab [label]="day.day">
         @for (diet of day.diet; track $index) {
         <div class="diet-container">
             <mat-card class="meal-card">
                 <mat-card-title>Breakfast</mat-card-title>
                 <mat-card-content>
-                    <h4>Protein</h4>
-                    <ul>
-                        @for (item of diet.breakfast.protein; track item) {
-                        <li>{{ item }}</li>
-                        }
-                    </ul>
-
-                    <h4>Fiber</h4>
-                    <ul>
-                        @for (item of diet.breakfast.fiber; track item) {
-                        <li>{{ item }}</li>
-                        }
-                    </ul>
-
-                    <h4>Carbs</h4>
-                    <ul>
-                        @for (item of diet.breakfast.carbs; track item) {
-                        <li>{{ item }}</li>
-                        }
-                    </ul>
+                    <ng-container *ngTemplateOutlet="mealMacros; context: { $implicit: diet.breakfast }"></ng-container>
+                    <p class="meal-calories">Calories: {{ diet.calories.breakfast }}</p>
                 </mat-card-content>
             </mat-card>
 
             <mat-card class="meal-card">
                 <mat-card-title>Lunch</mat-card-title>
                 <mat-card-content>
-                    <h4>Protein</h4>
-                    <ul>
-                        @for (item of diet.lunch.protein; track item) {
-                        <li>{{ item }}</li>
-                        }
-                    </ul>
-
-                    <h4>Fiber</h4>
-                    <ul>
-                        @for (item of diet.lunch.fiber; track item) {
-                        <li>{{ item }}</li>
-                        }
-                    </ul>
-
-                    <h4>Carbs</h4>
-                    <ul>
-                        @for (item of diet.lunch.carbs; track item) {
-                        <li>{{ item }}</li>
-                        }
-                    </ul>
+                    <ng-container *ngTemplateOutlet="mealMacros; context: { $implicit: diet.lunch }"></ng-container>
+                    <p class="meal-calories">Calories: {{ diet.calories.lunch }}</p>
                 </mat-card-content>
             </mat-card>
+
+            @if (diet.snack) {
+            <mat-card class="meal-card">
+                <mat-card-title>Snack</mat-card-title>
+                <mat-card-content>
+                    <ng-container *ngTemplateOutlet="mealMacros; context: { $implicit: diet.snack }"></ng-container>
+                    @if (diet.calories.snack) {
+                    <p class="meal-calories">Calories: {{ diet.calories.snack }}</p>
+                    }
+                </mat-card-content>
+            </mat-card>
+            }
 
             <mat-card class="meal-card">
                 <mat-card-title>Dinner</mat-card-title>
                 <mat-card-content>
-                    <h4>Protein</h4>
-                    <ul>
-                        @for (item of diet.dinner.protein; track item) {
-                        <li>{{ item }}</li>
-                        }
-                    </ul>
-
-                    <h4>Fiber</h4>
-                    <ul>
-                        @for (item of diet.dinner.fiber; track item) {
-                        <li>{{ item }}</li>
-                        }
-                    </ul>
-
-                    <h4>Carbs</h4>
-                    <ul>
-                        @for (item of diet.dinner.carbs; track item) {
-                        <li>{{ item }}</li>
-                        }
-                    </ul>
+                    <ng-container *ngTemplateOutlet="mealMacros; context: { $implicit: diet.dinner }"></ng-container>
+                    <p class="meal-calories">Calories: {{ diet.calories.dinner }}</p>
                 </mat-card-content>
             </mat-card>
 
             <mat-card class="summary-card">
                 <mat-card-title>Daily Summary</mat-card-title>
                 <mat-card-content>
-
-                    <h4>Calories</h4>
-                    <p>Breakfast: {{ diet.calories.breakfast }}</p>
-                    <p>Lunch: {{ diet.calories.lunch }}</p>
-                    <p>Dinner: {{ diet.calories.dinner}}</p>
-
                     <h4>Totals</h4>
-                    <p>Protein: {{diet.totals.protein }}</p>
+                    <p>Protein: {{ diet.totals.protein }}</p>
                     <p>Fiber: {{ diet.totals.fiber }}</p>
                     <p>Carbs: {{ diet.totals.carbs }}</p>
+                    @if (diet.totals.calories) {
+                    <p>Calories: {{ diet.totals.calories }}</p>
+                    }
 
+                    @if (hasAlternatives(diet.totals.protein) || hasAlternatives(diet.calories.dinner)) {
+                    <p class="alt-hint">Values separated by "|" indicate alternatives (e.g. paneer vs chicken).</p>
+                    }
+
+                    <h4>Notes</h4>
+                    <p class="diet-note">{{ diet.notes.correction }}</p>
                 </mat-card-content>
             </mat-card>
         </div>
@@ -102,3 +64,31 @@
     </mat-tab>
     }
 </mat-tab-group>
+}
+
+<ng-template #mealMacros let-meal>
+    <h4>Protein</h4>
+    <ul>
+        @for (item of meal.protein; track item) {
+        <li>{{ item }}</li>
+        }
+    </ul>
+
+    <h4>Fiber</h4>
+    <ul>
+        @for (item of meal.fiber; track item) {
+        <li>{{ item }}</li>
+        } @empty {
+        <li class="empty-item">—</li>
+        }
+    </ul>
+
+    <h4>Carbs</h4>
+    <ul>
+        @for (item of meal.carbs; track item) {
+        <li>{{ item }}</li>
+        } @empty {
+        <li class="empty-item">—</li>
+        }
+    </ul>
+</ng-template>

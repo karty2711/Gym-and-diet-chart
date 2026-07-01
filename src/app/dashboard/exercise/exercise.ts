@@ -1,51 +1,108 @@
-import { AfterViewInit, Component, signal } from '@angular/core';
-import { MatTabsModule } from '@angular/material/tabs';
-import { GYM_PLAN, Planner, Exercise } from '../../core/workout-data';
-import { MatTableModule } from '@angular/material/table';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BreakpointObserver } from '@angular/cdk/layout';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { CompletionService } from '../../core/completion.service';
+import { DayPlan, Exercise, IntensityLevel } from '../../core/workout-data';
+import { WorkoutDataService } from '../../core/workout-data.service';
 
 @Component({
   selector: 'app-exercise',
   imports: [MatTabsModule, MatTableModule, MatCheckboxModule],
   templateUrl: './exercise.html',
   styleUrl: './exercise.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class ExerciseComponent implements AfterViewInit {
-  readonly planner: Planner = GYM_PLAN;
-  readonly selectedIntensity = signal('Basic');
-  public displayedColumns: string[] = ['completed', 'exercise', 'sets', 'reps', 'rest', 'type'];
-  private expandedExerciseName: string | null = null;
+  private readonly data = inject(WorkoutDataService);
+  private readonly completion = inject(CompletionService);
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  private readonly destroyRef = inject(DestroyRef);
 
-  constructor(private breakpointObserver: BreakpointObserver) { }
+  readonly planner = this.data.planner;
+  readonly selectedIntensity = signal<IntensityLevel>('Basic');
+  readonly displayedColumns = signal<string[]>([
+    'completed',
+    'exercise',
+    'sets',
+    'reps',
+    'rest',
+    'type',
+  ]);
+  readonly expandedKey = signal<string | null>(null);
+
+  readonly filteredByDay = computed(() => {
+    const plan = this.planner();
+    const intensity = this.selectedIntensity();
+    if (!plan) {
+      return new Map<string, Exercise[]>();
+    }
+    return new Map(
+      plan.days.map((day) => [day.day, day.exercises.filter((e) => e.intensity === intensity)]),
+    );
+  });
 
   ngAfterViewInit(): void {
-    this.breakpointObserver.observe(['(max-width: 768px)'])
-      .subscribe((result: { matches: any; breakpoints: { [x: string]: any; }; }) => {
-        if (result.matches) {
-          this.displayedColumns = ['completed', 'exercise', 'sets', 'reps', 'rest'];
-        } else {
-          this.displayedColumns = ['completed', 'exercise', 'sets', 'reps', 'rest', 'type'];
-        }
+    this.breakpointObserver
+      .observe(['(max-width: 768px)'])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        this.displayedColumns.set(
+          result.matches
+            ? ['completed', 'exercise', 'sets', 'reps', 'rest']
+            : ['completed', 'exercise', 'sets', 'reps', 'rest', 'type'],
+        );
       });
   }
 
-  public isExpandedRow = (_: number, row: Exercise) => this.isExpanded(row);
-
-  public setIntensity(type: 'Basic' | 'Intermediate' | 'Advanced') {
+  setIntensity(type: IntensityLevel): void {
     this.selectedIntensity.set(type);
+    this.expandedKey.set(null);
   }
 
-  public getFilteredExercises(exercises: Exercise[]): Exercise[] {
-    return exercises.filter(e => e.intensity === this.selectedIntensity());
+  exercisesForDay(day: DayPlan): Exercise[] {
+    return this.filteredByDay().get(day.day) ?? [];
   }
 
-  public isExpanded(row: Exercise): boolean {
-    return this.expandedExerciseName === row.name;
+  rowKey(day: string, row: Exercise): string {
+    return `${day}::${row.name}`;
   }
 
-  public toggle(row: Exercise): void {
-    this.expandedExerciseName = this.isExpanded(row) ? null : row.name;
+  isExpanded(day: string, row: Exercise): boolean {
+    return this.expandedKey() === this.rowKey(day, row);
+  }
+
+  expandedRowWhen(day: string): (index: number, row: Exercise) => boolean {
+    return (_, row) => this.isExpanded(day, row);
+  }
+
+  toggle(day: string, row: Exercise): void {
+    const key = this.rowKey(day, row);
+    this.expandedKey.set(this.expandedKey() === key ? null : key);
+  }
+
+  onRowKeydown(event: KeyboardEvent, day: string, row: Exercise): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.toggle(day, row);
+    }
+  }
+
+  isCompleted(day: string, row: Exercise): boolean {
+    return this.completion.isCompleted(day, row.name);
+  }
+
+  onCompletedChange(day: string, row: Exercise, checked: boolean): void {
+    this.completion.setCompleted(day, row.name, checked);
   }
 }

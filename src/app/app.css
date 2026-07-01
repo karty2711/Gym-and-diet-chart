@@ -18,6 +18,21 @@
     margin-top: 20px;
 }
 
+.loading,
+.error {
+    text-align: center;
+    padding: 48px 24px;
+    font-size: 1.1rem;
+}
+
+.error {
+    color: #fca5a5;
+}
+
+.section-tabs > .mat-mdc-tab-body-wrapper {
+    border-radius: 0 0 12px 12px;
+}
+
 .mat-mdc-tab-group {
     --mdc-tab-indicator-active-indicator-color: #38bdf8;
     --mat-tab-header-active-label-text-color: #38bdf8;

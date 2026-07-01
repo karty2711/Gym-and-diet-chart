@@ -1,8 +1,10 @@
+@if (planner(); as plan) {
 <div class="header">
-    <h1 class="title">{{planner.title}}</h1>
+    <h1 class="title">{{ plan.title }}</h1>
     <h3 class="titleUnderLay">
-        @for(split of planner.subtitle.splits; track split){
-        <span>{{split}}</span>
+        @for (split of plan.subtitle.splits; track split) {
+        <span>{{ split }}</span>
         }
     </h3>
 </div>
+}

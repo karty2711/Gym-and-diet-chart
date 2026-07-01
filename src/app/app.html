@@ -1,15 +1,21 @@
 <div class="container">
-  <app-header></app-header>
+  @if (data.loading()) {
+    <p class="loading" role="status">Loading workout plan…</p>
+  } @else if (data.error()) {
+    <p class="error" role="alert">{{ data.error() }}</p>
+  } @else {
+    <app-header></app-header>
 
-  <div class="body">
-    <mat-tab-group>
-      <mat-tab label="Exercise">
-        <app-exercise></app-exercise>
-      </mat-tab>
-      <mat-tab label="Diet">
-        <app-diet></app-diet>
-      </mat-tab>
-    </mat-tab-group>
-    <app-footer></app-footer>
-  </div>
+    <div class="body">
+      <mat-tab-group class="section-tabs" aria-label="Workout sections">
+        <mat-tab label="Exercise">
+          <app-exercise></app-exercise>
+        </mat-tab>
+        <mat-tab label="Diet">
+          <app-diet></app-diet>
+        </mat-tab>
+      </mat-tab-group>
+      <app-footer></app-footer>
+    </div>
+  }
 </div>

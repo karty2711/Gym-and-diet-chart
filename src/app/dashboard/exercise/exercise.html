@@ -1,14 +1,18 @@
-<div class="intensitySelector">
-    <button class="btn basicBtn" [class.active]="selectedIntensity() === 'Basic'"
+@if (planner(); as plan) {
+<div class="intensitySelector" role="group" aria-label="Exercise intensity level">
+    <button type="button" class="btn basicBtn" [class.active]="selectedIntensity() === 'Basic'"
+        [attr.aria-pressed]="selectedIntensity() === 'Basic'"
         (click)="setIntensity('Basic')">Basic</button>
-    <button class="btn intermediateBtn" [class.active]="selectedIntensity() === 'Intermediate'"
+    <button type="button" class="btn intermediateBtn" [class.active]="selectedIntensity() === 'Intermediate'"
+        [attr.aria-pressed]="selectedIntensity() === 'Intermediate'"
         (click)="setIntensity('Intermediate')">Intermediate</button>
-    <button class="btn advancedBtn" [class.active]="selectedIntensity() === 'Advanced'"
+    <button type="button" class="btn advancedBtn" [class.active]="selectedIntensity() === 'Advanced'"
+        [attr.aria-pressed]="selectedIntensity() === 'Advanced'"
         (click)="setIntensity('Advanced')">Advanced</button>
 </div>
 
-<mat-tab-group mat-stretch-tabs="true" mat-align-tabs="center">
-    @for (data of planner.days; track data.day) {
+<mat-tab-group mat-stretch-tabs="true" mat-align-tabs="center" class="day-tabs" aria-label="Workout days">
+    @for (data of plan.days; track data.day) {
     <mat-tab [label]="data.day">
         <span class="contentHeader">
             <span class="contentHeaderWrapper">
@@ -16,13 +20,20 @@
             </span>
         </span>
         <div class="contentBody">
-            <table mat-table [dataSource]="getFilteredExercises(data.exercises)" class="mat-elevation-z8"
-                multiTemplateDataRows>
+            @if (exercisesForDay(data).length === 0) {
+            <p class="rest-message">Rest day — no exercises scheduled. See the Diet tab for meal guidance.</p>
+            } @else {
+            <table mat-table [dataSource]="exercisesForDay(data)" class="mat-elevation-z8" multiTemplateDataRows>
 
                 <ng-container matColumnDef="completed">
                     <th mat-header-cell *matHeaderCellDef class="first-header-row"> Completed </th>
-                    <td mat-cell *matCellDef="let row;" class="first-header-row">
-                        <mat-checkbox (click)="$event.stopPropagation()"></mat-checkbox>
+                    <td mat-cell *matCellDef="let row" class="first-header-row">
+                        <mat-checkbox
+                            [checked]="isCompleted(data.day, row)"
+                            [attr.aria-label]="'Mark ' + row.name + ' as completed'"
+                            (click)="$event.stopPropagation()"
+                            (change)="onCompletedChange(data.day, row, $event.checked)">
+                        </mat-checkbox>
                     </td>
                 </ng-container>
 
@@ -52,22 +63,30 @@
                 </ng-container>
 
                 <ng-container matColumnDef="expandedDetail">
-                    <td mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns.length">
+                    <td mat-cell *matCellDef="let row" [attr.colspan]="displayedColumns().length">
                         {{row.note}}
                     </td>
                 </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="displayedColumns;">
-                </tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded-row]="isExpanded(row)"
-                    (click)="toggle(row)" [class.compound-row]="row.type === 'Compound'"
+                <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns();"
+                    [class.expanded-row]="isExpanded(data.day, row)"
+                    (click)="toggle(data.day, row)"
+                    (keydown)="onRowKeydown($event, data.day, row)"
+                    tabindex="0"
+                    role="button"
+                    [attr.aria-expanded]="isExpanded(data.day, row)"
+                    [attr.aria-label]="row.name + ' — click to ' + (isExpanded(data.day, row) ? 'collapse' : 'expand') + ' notes'"
+                    [class.compound-row]="row.type === 'Compound'"
                     [class.isolation-row]="row.type === 'Isolation'">
                 </tr>
-                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpandedRow"
+                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']; when: expandedRowWhen(data.day)"
                     class="expanded-row-detail">
                 </tr>
             </table>
+            }
         </div>
     </mat-tab>
     }
 </mat-tab-group>
+}

@@ -1,21 +1,18 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatTableModule } from '@angular/material/table';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { DietComponent } from "./dashboard/diet/diet";
-import { FooterComponent } from "./dashboard/footer/footer";
-import { ExerciseComponent } from "./dashboard/exercise/exercise";
-import { HeaderComponent } from "./dashboard/header/header";
+import { WorkoutDataService } from './core/workout-data.service';
+import { DietComponent } from './dashboard/diet/diet';
+import { ExerciseComponent } from './dashboard/exercise/exercise';
+import { FooterComponent } from './dashboard/footer/footer';
+import { HeaderComponent } from './dashboard/header/header';
 
 @Component({
   selector: 'app-root',
-  imports: [MatTabsModule, MatTableModule, MatCardModule, MatCheckboxModule, DietComponent, FooterComponent, ExerciseComponent, HeaderComponent],
+  imports: [MatTabsModule, DietComponent, ExerciseComponent, FooterComponent, HeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class App {
-  protected readonly title = signal('Gym-and-diet-chart');
+  readonly data = inject(WorkoutDataService);
 }
